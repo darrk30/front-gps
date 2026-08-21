@@ -1,9 +1,10 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createHashRouter, Navigate } from 'react-router-dom'
 import { AuthLayout } from '@/layouts/AuthLayout'
 import { AppLayout } from '@/layouts/AppLayout'
 import { GuestOnly } from '@/routes/GuestOnly'
 import { RequireAuth } from '@/routes/RequireAuth'
 import { ProtectedRoute } from '@/routes/ProtectedRoute'
+import { CatchAllRoute } from '@/routes/CatchAllRoute'
 import { PERMISOS } from '@/lib/permisos'
 import { LoginPage } from '@/features/auth/LoginPage'
 import { GoogleCallbackPage } from '@/features/auth/GoogleCallbackPage'
@@ -33,7 +34,12 @@ import { AyudaSoportePage } from '@/features/perfil/AyudaSoportePage'
 import { AcercaDePage } from '@/features/perfil/AcercaDePage'
 import { NotificacionesPage } from '@/features/notificaciones/NotificacionesPage'
 
-export const router = createBrowserRouter([
+// HashRouter (URLs con #) en vez de BrowserRouter: el hosting estático de
+// Hostinger corre sobre nginx sin rewrite a index.html, así que cualquier ruta
+// que no sea "/" tira 404 al entrar directo o al recargar. Con hash, el
+// navegador nunca le pide al servidor nada más que "/" — el resto lo resuelve
+// React Router en el cliente.
+export const router = createHashRouter([
   {
     element: <GuestOnly />,
     children: [
@@ -159,5 +165,5 @@ export const router = createBrowserRouter([
     ],
   },
   { path: '/', element: <Navigate to="/mapa" replace /> },
-  { path: '*', element: <Navigate to="/mapa" replace /> },
+  { path: '*', element: <CatchAllRoute /> },
 ])

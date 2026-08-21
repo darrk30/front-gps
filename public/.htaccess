@@ -1,0 +1,14 @@
+# Necesario para React Router en un hosting estático: sin esto, recargar la
+# página en una ruta como /mapa o /perfil da 404 (no existe ese archivo, lo
+# resuelve el router en el navegador) — esto redirige cualquier ruta que no
+# sea un archivo/carpeta real hacia index.html.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
+AddType application/manifest+json .webmanifest

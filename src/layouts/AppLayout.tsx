@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { LogOut, MapPin, Menu, User as UserIcon } from 'lucide-react'
 import { useAuthStore } from '@/features/auth/auth-store'
@@ -52,7 +52,7 @@ function SidebarNavLinks({ items, onNavigate }: { items: NavItem[]; onNavigate?:
   )
 }
 
-export function AppLayout() {
+export function AppLayout({ children }: { children?: ReactNode } = {}) {
   const user = useAuthStore((s) => s.user)
   const hasPermission = useAuthStore((s) => s.hasPermission)
   const navigate = useNavigate()
@@ -147,7 +147,7 @@ export function AppLayout() {
           <AdminBreadcrumb />
 
           <main className="min-w-0 flex-1 overflow-auto">
-            <Outlet />
+            {children ?? <Outlet />}
           </main>
         </div>
       </div>
