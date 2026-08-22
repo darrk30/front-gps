@@ -100,7 +100,7 @@ export async function solicitarTokenPush(): Promise<string | null> {
  * Devuelve una función para dejar de escuchar.
  */
 export function escucharPushEnPrimerPlano(
-  onMensaje: (payload: { titulo?: string; mensaje?: string }) => void,
+  onMensaje: (payload: { titulo?: string; mensaje?: string; tipo?: string }) => void,
 ): () => void {
   let cancelado = false
   let unsubscribe: (() => void) | null = null
@@ -108,7 +108,11 @@ export function escucharPushEnPrimerPlano(
   getFirebaseMessaging().then((messaging) => {
     if (cancelado || !messaging) return
     unsubscribe = onMessage(messaging, (payload) => {
-      onMensaje({ titulo: payload.notification?.title, mensaje: payload.notification?.body })
+      onMensaje({
+        titulo: payload.notification?.title,
+        mensaje: payload.notification?.body,
+        tipo: payload.data?.tipo,
+      })
     })
   })
 

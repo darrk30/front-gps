@@ -4,12 +4,22 @@ import { AlertCircle, ArrowLeft, Bus as BusIcon, Loader2, MapPin, MapPinned, Sta
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { getErrorMessage } from '@/lib/axios'
 import { formatEtaMinutos } from '@/lib/eta'
 import { cn } from '@/lib/utils'
 import { useBuses } from '@/features/buses/hooks'
 import { useRealtimeLocations } from '@/features/mapa/useRealtimeLocations'
 import { useFavoritos, useToggleFavorito } from '@/features/favoritos/hooks'
+import { usePushNotifications } from '@/features/notificaciones/usePushNotifications'
 import { useParadero } from './hooks'
 import { BusHaciaParadero, type ProximoBus } from './BusHaciaParadero'
 
@@ -28,6 +38,8 @@ export function ParaderoDetallePage() {
   const favoritosQuery = useFavoritos()
   const toggleFavorito = useToggleFavorito()
   const esFavorito = (favoritosQuery.data ?? []).some((f) => f.paradero.id === paraderoId)
+  const { activo: pushActivo } = usePushNotifications()
+  const [avisoFavoritoAbierto, setAvisoFavoritoAbierto] = useState(false)
 
   // Solo los buses con ruta asignada son candidatos a "ir hacia" este
   // paradero — a cada uno se le monta un BusHaciaParadero que corre la
@@ -93,7 +105,13 @@ export function ParaderoDetallePage() {
                     </Badge>
                     <button
                       type="button"
-                      onClick={() => toggleFavorito.mutate({ paraderoId, esFavorito })}
+                      onClick={() => {
+                        const marcando = !esFavorito
+                        toggleFavorito.mutate(
+                          { paraderoId, esFavorito },
+                          { onSuccess: () => marcando && setAvisoFavoritoAbierto(true) },
+                        )
+                      }}
                       disabled={toggleFavorito.isPending}
                       aria-label={esFavorito ? 'Quitar de favoritos' : 'Marcar como favorito'}
                       className="text-muted-foreground hover:text-amber-500 disabled:opacity-50"
@@ -159,6 +177,24 @@ export function ParaderoDetallePage() {
           </>
         )
       )}
+
+      <Dialog open={avisoFavoritoAbierto} onOpenChange={setAvisoFavoritoAbierto}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>🔔 Notificaciones activadas</DialogTitle>
+            <DialogDescription>
+              Te avisaremos cuando el bus esté cerca o llegue a {paradero?.nombre}.
+              {!pushActivo &&
+                ' Si no te llegan, revisa que las notificaciones estén permitidas para este sitio en Chrome.'}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button>Entendido</Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

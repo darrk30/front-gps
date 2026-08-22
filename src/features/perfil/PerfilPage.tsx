@@ -25,6 +25,7 @@ function initials(name: string) {
 function PerfilRow({
   icon,
   label,
+  hint,
   to,
   onClick,
   right,
@@ -32,6 +33,8 @@ function PerfilRow({
 }: {
   icon: ReactNode
   label: string
+  /** Texto chico debajo del label, ej. para explicar por qué una acción está deshabilitada. */
+  hint?: ReactNode
   to?: string
   onClick?: () => void
   right?: ReactNode
@@ -42,7 +45,10 @@ function PerfilRow({
       className={`flex items-center gap-3 px-4 py-3.5 ${destructive ? 'text-destructive' : ''} ${to || onClick ? 'hover:bg-accent' : ''}`}
     >
       {icon}
-      <span className="flex-1 font-medium">{label}</span>
+      <span className="flex-1">
+        <span className="block font-medium">{label}</span>
+        {hint && <span className="block text-xs text-muted-foreground">{hint}</span>}
+      </span>
       {right ?? (to && <ChevronRight className="size-4 text-muted-foreground" />)}
     </div>
   )
@@ -57,6 +63,7 @@ export function PerfilPage() {
   const { resolvedTheme, setTheme } = useTheme()
   const cerrarSesion = useLogout()
   const { activo: pushActivo, activar: activarPush } = usePushNotifications()
+  const permisoDenegado = typeof Notification !== 'undefined' && Notification.permission === 'denied'
 
   const rol = user?.roles[0]
   const esAlumno = user?.alumno != null
@@ -91,10 +98,14 @@ export function PerfilPage() {
             <PerfilRow
               icon={<Bell className="size-4 text-muted-foreground" />}
               label="Notificaciones"
+              hint={
+                permisoDenegado &&
+                'Bloqueadas en el navegador. Tócalo (🔒 o ⓘ) junto a la dirección del sitio y permite las notificaciones.'
+              }
               right={
                 <Switch
                   checked={pushActivo}
-                  disabled={pushActivo}
+                  disabled={pushActivo || permisoDenegado}
                   onCheckedChange={(checked) => checked && activarPush()}
                 />
               }

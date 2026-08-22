@@ -1,15 +1,10 @@
-import { BusFront, Flag, MapPin } from 'lucide-react'
 import { formatFechaHora } from '@/lib/fecha'
 import { cn } from '@/lib/utils'
 import type { Notificacion } from '@/types/api'
-
-const TIPO_ICONO = {
-  bus_cerca: BusFront,
-  bus_en_paradero: Flag,
-} as const
+import { iconoParaTipo } from './tipoIcono'
 
 export function NotificacionRow({ notificacion, onClick }: { notificacion: Notificacion; onClick: () => void }) {
-  const Icono = TIPO_ICONO[notificacion.tipo] ?? MapPin
+  const Icono = iconoParaTipo(notificacion.tipo)
 
   return (
     <button

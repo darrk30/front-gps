@@ -5,6 +5,7 @@ import { useAuthStore } from '@/features/auth/auth-store'
 import { escucharPushEnPrimerPlano, solicitarTokenPush } from '@/lib/firebase'
 import { registrarDispositivo } from '@/features/dispositivos/api'
 import { reproducirSonidoNotificacion } from '@/lib/notificationSound'
+import { iconoParaTipo } from './tipoIcono'
 
 interface PushNotificationsState {
   activo: boolean
@@ -61,10 +62,14 @@ export function PushNotificationsProvider({ children }: { children: ReactNode })
 
   useEffect(() => {
     if (!esAlumno) return
-    return escucharPushEnPrimerPlano(({ titulo, mensaje }) => {
+    return escucharPushEnPrimerPlano(({ titulo, mensaje, tipo }) => {
       queryClient.invalidateQueries({ queryKey: ['notificaciones'] })
       reproducirSonidoNotificacion()
-      toast.info(titulo ?? 'Nueva notificación', { description: mensaje })
+      const Icono = iconoParaTipo(tipo)
+      toast.info(titulo ?? 'Nueva notificación', {
+        description: mensaje,
+        icon: <Icono className="size-4" />,
+      })
     })
   }, [esAlumno, queryClient])
 
