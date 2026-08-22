@@ -22,5 +22,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   if (!googleClientId) return content
 
-  return <GoogleOAuthProvider clientId={googleClientId}>{content}</GoogleOAuthProvider>
+  return (
+    <GoogleOAuthProvider clientId={googleClientId} locale="es">
+      {content}
+    </GoogleOAuthProvider>
+  )
 }

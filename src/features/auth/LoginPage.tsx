@@ -9,6 +9,7 @@ import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { getErrorMessage } from '@/lib/axios'
@@ -83,9 +84,8 @@ export function LoginPage() {
 
           <div className="space-y-2">
             <Label htmlFor="password">Contraseña</Label>
-            <Input
+            <PasswordInput
               id="password"
-              type="password"
               autoComplete="current-password"
               disabled={loginMutation.isPending}
               {...register('password')}
@@ -105,29 +105,34 @@ export function LoginPage() {
           <>
             <div className="flex items-center gap-3">
               <div className="h-px flex-1 bg-border" />
-              <span className="text-xs text-muted-foreground">o continúa con</span>
+              <span className="text-xs text-muted-foreground">o</span>
               <div className="h-px flex-1 bg-border" />
             </div>
 
-            <div className="flex justify-center">
-              {googleLoading ? (
-                <div className="flex h-10 items-center justify-center">
-                  <Loader2 className="size-4 animate-spin text-muted-foreground" />
-                </div>
-              ) : (
-                <GoogleLogin
-                  text="signin_with"
-                  onSuccess={(credentialResponse) => {
-                    if (!credentialResponse.credential) {
-                      toast.error('No se pudo obtener la credencial de Google.')
-                      return
-                    }
-                    setGoogleLoading(true)
-                    googleMutation.mutate({ token: credentialResponse.credential })
-                  }}
-                  onError={() => toast.error('No se pudo iniciar sesión con Google.')}
-                />
-              )}
+            <div className="space-y-2">
+              <p className="text-center text-xs text-muted-foreground">
+                Ingresa con tu cuenta institucional de la UNPRG — si es tu primera vez, se registra sola.
+              </p>
+              <div className="flex justify-center">
+                {googleLoading ? (
+                  <div className="flex h-10 items-center justify-center">
+                    <Loader2 className="size-4 animate-spin text-muted-foreground" />
+                  </div>
+                ) : (
+                  <GoogleLogin
+                    text="continue_with"
+                    onSuccess={(credentialResponse) => {
+                      if (!credentialResponse.credential) {
+                        toast.error('No se pudo obtener la credencial de Google.')
+                        return
+                      }
+                      setGoogleLoading(true)
+                      googleMutation.mutate({ token: credentialResponse.credential })
+                    }}
+                    onError={() => toast.error('No se pudo iniciar sesión con Google.')}
+                  />
+                )}
+              </div>
             </div>
           </>
         )}

@@ -6,7 +6,7 @@ import { useMutation } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { getErrorMessage, getValidationErrors } from '@/lib/axios'
@@ -75,9 +75,8 @@ export function ChangePasswordPage() {
           >
             <div className="space-y-2">
               <Label htmlFor="current_password">Contraseña actual</Label>
-              <Input
+              <PasswordInput
                 id="current_password"
-                type="password"
                 autoComplete="current-password"
                 disabled={mutation.isPending}
                 {...register('current_password')}
@@ -89,9 +88,8 @@ export function ChangePasswordPage() {
 
             <div className="space-y-2">
               <Label htmlFor="password">Nueva contraseña</Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
                 autoComplete="new-password"
                 disabled={mutation.isPending}
                 {...register('password')}
@@ -103,9 +101,8 @@ export function ChangePasswordPage() {
 
             <div className="space-y-2">
               <Label htmlFor="password_confirmation">Confirmar nueva contraseña</Label>
-              <Input
+              <PasswordInput
                 id="password_confirmation"
-                type="password"
                 autoComplete="new-password"
                 disabled={mutation.isPending}
                 {...register('password_confirmation')}
